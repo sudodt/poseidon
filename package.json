@@ -40,7 +40,7 @@
     "start": "concurrently --kill-others \"npm run start:app\" \"npm run start:recommender\" \"npm run start:web\"",
     "start:app": "node -r dotenv/config ./packages/shopping",
     "start:recommender": "node ./packages/recommender",
-    "start:web": "node ./packages/web",
+    "start:web": "next ./packages/web",
     "prepublishOnly": "npm run test"
   },
   "repository": {

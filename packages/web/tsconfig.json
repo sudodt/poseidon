@@ -1,10 +1,14 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
-    "strict": true,
+    "strict": false,
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "esModuleInterop": true,
@@ -12,24 +16,14 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve",
-    "paths": {
-      "@/*": ["*"],
-      "@/pages/*": ["src/pages/*"],
-      "@/styles/*": ["styles/*"],
-      "@/utils/*": ["src/utils/*"],
-      "@/components/*": ["src/components/*"],
-      "@/redux/*": ["src/redux/*"],
-      "@/config/*": ["src/config/*"],
-      "@/services/*": ["src/services/*"],
-      "@/statics/*": ["src/statics/*"],
-    },
+    "jsx": "preserve"
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules"],
-  "suppressImplicitAnyIndexErrors": true,
-  "strictNullChecks":false,
-  "strictPropertyInitialization": false,
-  "outDir": "dist",
-  "rootDir": "src"
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "lb-tsc",
+    "build": "next build",
     "build:watch": "lb-tsc --watch",
     "clean": "lb-clean dist* *.tsbuildinfo",
     "migrate": "node ./dist/migrate",
@@ -14,10 +14,10 @@
     "test:ci": "lb-mocha --allow-console-logs \"dist/__tests__/**/*.js\"",
     "test:dev": "lb-mocha --allow-console-logs dist/__tests__/**/*.js && npm run posttest",
     "prestart": "npm run build",
-    "start": "concurrently --kill-others \"npm run start:app\" \"npm run start:recommender\"",
+    "start": "concurrently --kill-others \"npm run start:web\" \"npm run start:app\" \"npm run start:recommender\"",
     "start:app": "node -r dotenv/config .",
     "start:recommender": "node ../recommender",
-    "start:web": "node ./packages/web",
+    "start:web": "next start",
     "prepublishOnly": "npm run test"
   },
   "dependencies": {
