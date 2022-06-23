@@ -1,0 +1,13 @@
+{
+    "types": [
+      {
+        "id": 1,
+        "string": "Cá nhân"
+      },
+      {
+        "id": 2,
+        "string": "Môi giới"
+      }
+    ]
+  }
+  
