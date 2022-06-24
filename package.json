@@ -1,93 +1,69 @@
 {
-  "name": "loopback4-example-shopping-monorepo",
-  "version": "1.1.1",
-  "description": "Root package to manage monorepo for LoopBack 4 Example: Online Shopping APIs",
+  "name": "poseidon",
+  "version": "0.0.1",
+  "description": "poseidon api",
   "keywords": [
     "loopback-application",
     "loopback"
   ],
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "engines": {
-    "node": ">=8.9"
+    "node": "14 || 16 || 17 || 18"
   },
   "scripts": {
-    "postinstall": "lerna bootstrap",
-    "build": "lerna run build",
-    "clean": "lerna run clean",
-    "commit": "git-cz",
-    "commitmsg": "commitlint -E GIT_PARAMS",
-    "docker:version": "lerna version --no-git-tag-version --no-push --no-changelog",
-    "version": "node ./bin/update-versions",
-    "docker:build": "./bin/build-images.sh",
-    "docker:start": "./bin/start-dbs.sh",
-    "docker:stop": "./bin/stop-dbs.sh",
-    "migrate": "node ./packages/shopping/dist/migrate",
-    "lint": "npm run prettier:check && npm run eslint",
-    "lint:fix": "npm run prettier:fix && npm run eslint:fix",
-    "prettier:cli": "lb-prettier \"**/*.ts\" \"**/*.js\" \"**/*.md\"",
-    "prettier:check": "npm run prettier:cli -- --check",
-    "prettier:fix": "npm run prettier:cli -- --write",
-    "eslint": "lb-eslint --cache --report-unused-disable-directives .",
-    "eslint:fix": "npm run eslint -- --fix",
-    "pretest": "npm run clean && npm run build",
-    "pretest:ci": "npm run build",
-    "test": "lb-mocha --allow-console-logs \"packages/*/dist/__tests__/**/*.js\"",
-    "test:ui": "cd packages/shopping && npm run test:ui",
-    "test:ci": "lb-mocha --allow-console-logs \"packages/*/dist/__tests__/**/*.js\"",
-    "posttest": "npm run lint",
-    "test:dev": "lb-mocha --allow-console-logs \"packages/*/dist/__tests__/**/*.js\" && npm run posttest",
-    "prestart": "npm run build",
-    "start": "concurrently --kill-others \"npm run start:app\" \"npm run start:recommender\" \"npm run start:web\"",
-    "start:app": "node -r dotenv/config ./packages/shopping",
-    "start:recommender": "node ./packages/recommender",
-    "start:web": "next ./packages/web",
-    "prepublishOnly": "npm run test"
+    "build": "lb-tsc",
+    "build:watch": "lb-tsc --watch",
+    "lint": "yarn run eslint && yarn run prettier:check",
+    "lint:fix": "yarn run eslint:fix && yarn run prettier:fix",
+    "prettier:cli": "lb-prettier \"**/*.ts\" \"**/*.js\"",
+    "prettier:check": "yarn run prettier:cli -l",
+    "prettier:fix": "yarn run prettier:cli --write",
+    "eslint": "lb-eslint --report-unused-disable-directives .",
+    "eslint:fix": "yarn run eslint --fix",
+    "pretest": "yarn run rebuild",
+    "test": "lb-mocha --allow-console-logs \"dist/__tests__\"",
+    "posttest": "yarn run lint",
+    "test:dev": "lb-mocha --allow-console-logs dist/__tests__/**/*.js && yarn run posttest",
+    "docker:build": "docker build -t poseidon .",
+    "docker:run": "docker run -p 3000:3000 -d poseidon",
+    "premigrate": "yarn run build",
+    "migrate": "node ./dist/migrate",
+    "preopenapi-spec": "yarn run build",
+    "openapi-spec": "node ./dist/openapi-spec",
+    "prestart": "yarn run rebuild",
+    "start": "node -r source-map-support/register .",
+    "clean": "lb-clean dist *.tsbuildinfo .eslintcache",
+    "rebuild": "yarn run clean && yarn run build"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/loopbackio/loopback4-example-shopping.git"
+    "url": ""
   },
-  "private": true,
-  "license": "MIT",
-  "dependencies": {},
+  "author": "dt <dangthao.stuk14@gmail.com>",
+  "license": "",
+  "files": [
+    "README.md",
+    "dist",
+    "src",
+    "!*/__tests__"
+  ],
+  "dependencies": {
+    "@loopback/boot": "^5.0.1",
+    "@loopback/core": "^4.0.1",
+    "@loopback/repository": "^5.0.1",
+    "@loopback/rest": "^12.0.1",
+    "@loopback/rest-explorer": "^5.0.1",
+    "@loopback/service-proxy": "^5.0.1",
+    "tslib": "^2.0.0"
+  },
   "devDependencies": {
-    "@commitlint/cli": "17.0.1",
-    "@commitlint/config-conventional": "17.0.0",
-    "@commitlint/config-lerna-scopes": "17.0.0",
-    "@commitlint/travis-cli": "17.0.1",
-    "@loopback/build": "9.0.0",
-    "@loopback/eslint-config": "13.0.0",
-    "@loopback/testlab": "5.0.0",
-    "@types/fs-extra": "9.0.13",
-    "@types/node": "17.0.42",
-    "@typescript-eslint/eslint-plugin": "5.27.1",
-    "@typescript-eslint/parser": "5.27.1",
-    "commitizen": "4.2.4",
-    "concurrently": "7.2.1",
-    "cz-conventional-changelog": "3.3.0",
-    "dotenv": "16.0.1",
-    "eslint": "8.17.0",
-    "eslint-config-prettier": "8.5.0",
-    "eslint-plugin-cypress": "2.12.1",
-    "eslint-plugin-eslint-plugin": "4.2.0",
-    "eslint-plugin-mocha": "10.0.5",
-    "fs-extra": "10.1.0",
-    "husky": "8.0.1",
-    "lerna": "4.0.0",
-    "mocha": "10.0.0",
-    "source-map-support": "0.5.21",
-    "testcontainers": "8.10.1",
-    "typescript": "4.7.3"
-  },
-  "copyright.owner": "IBM Corp.",
-  "config": {
-    "commitizen": {
-      "path": "./node_modules/cz-conventional-changelog"
-    }
-  },
-  "husky": {
-    "hooks": {
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
-    }
+    "@loopback/build": "^9.0.1",
+    "source-map-support": "^0.5.21",
+    "@loopback/testlab": "^5.0.1",
+    "@types/node": "^14.18.21",
+    "@loopback/eslint-config": "^13.0.1",
+    "eslint": "^8.17.0",
+    "typescript": "~4.7.3"
   }
 }
