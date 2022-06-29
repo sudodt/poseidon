@@ -72,5 +72,12 @@
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
+  },
+  "_moduleAliases": {
+    "@root": ".",
+    "@domain": "dist/domain/*",
+    "@constants": "dist/config/constants",
+    "@application": "dist/application/*",
+    "@infrastructure": "dist/infrastructure/*"
   }
 }
