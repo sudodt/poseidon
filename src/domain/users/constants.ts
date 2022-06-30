@@ -1,1 +1,0 @@
-export const USER_RESPOSITORY = 'USER_RESPOSITORY';
