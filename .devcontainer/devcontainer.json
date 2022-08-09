@@ -2,8 +2,7 @@
     "name": "dt",
     "runArgs": [ "--cap-add=SYS_PTRACE", "--security-opt", "seccomp=unconfined"],
     "build": {
-        "dockerfile": "Dockerfile",
-        "target": "dev"
+        "dockerfile": "Dockerfile"
     },
 
     // Use 'settings' to set *default* container specific settings.json values on container create.
