@@ -5,5 +5,5 @@ export const Protocol = createParamDecorator(
     console.log({ defaultValue });
     const request = ctx.switchToHttp().getRequest();
     return request.protocol;
-  }
+  },
 );
