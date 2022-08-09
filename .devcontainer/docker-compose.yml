@@ -1,68 +1,69 @@
-version: '3.9'
+version: '3.8'
+
 services:
-  dev:
-    container_name: server-dev
-    image: server-dev:1.0.0
+  app:
     build:
       context: .
-      target: development
-      dockerfile: ./Dockerfile
-    command: npm run start:debug
-    ports:
-      - 3000:3000
-      - 9229:9229
-    networks:
-      - server-network
+      dockerfile: Dockerfile
+      args:
+        # Update 'VARIANT' to pick an LTS version of Node.js: 16, 14, 12.
+        # Append -bullseye or -buster to pin to an OS version.
+        # Use -bullseye variants on local arm64/Apple Silicon.
+        VARIANT: '16'
     volumes:
-      - .:/usr/src/app
-      - /usr/src/app/node_modules
+      - ..:/workspace:cached
+    init: true
+    environment:
+      EDDY_CLI_KEY_PATH: /workspace
+
+    # Overrides default command so things don't shut down after the process ends.
+    command: sleep infinity
+
+    # Runs app on the same network as the database container, allows "forwardPorts" in devcontainer.json function.
+    network_mode: service:db
+    # Uncomment the next line to use a non-root user for all processes.
+    # user: node
+
+    # Use "forwardPorts" in **devcontainer.json** to forward an app port locally.
+    # (Adding the "ports" property to this file will not forward from a Codespace.)
+
+  # mongosetup:
+  #   image: mongo:latest
+  #   depends_on:
+  #     - db
+  #   restart: 'no'
+  #   entrypoint: ['bash', '-c', "sleep 10 && mongo --host localhost:27017 --eval 'rs.initiate()'"]
+  db:
+    # Based on https://stackoverflow.com/q/67020325/3694288
+    image: mongo:5
     restart: unless-stopped
-    environment:
-      MONGO_URL: mongodb
-  mongodb:
-    image: mongo:5.0.0
-    container_name: server-mongodb
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=root
-      - MONGO_INITDB_ROOT_PASSWORD=pass12345
+    # deploy:
+    #   replicas: 1
     volumes:
       - mongodb-data:/data/db
-    networks:
-      - server-network
+      - ./mongo-scripts:/docker-entrypoint-initdb.d/
+      - type: bind
+        source: ./mongod.conf
+        target: /etc/mongod.conf
+    # entrypoint: ['mongod', '--config', '/etc/mongod.conf']
+    # command: ['--replSet', 'rs0', '--bind_ip_all']
+    command: '--bind_ip_all --replSet rs0'
+    # Uncomment to change startup options
+    # environment:
+    #   - PUID=1000
+    #   - PGID=1000
+    #   - MONGO_INITDB_ROOT_USERNAME=mongo
+    #   - MONGO_INITDB_ROOT_PASSWORD=mongo
+    #   - MONGO_INITDB_DATABASE=my-service
+    #   - MONGO_REPLICA_SET_NAME=rs0
     ports:
       - 27017:27017
-    healthcheck:
-      test: echo 'db.runCommand("ping").ok' | mongo localhost:27017/test --quiet
-      interval: 30s
-      timeout: 10s
-      retries: 3
-    restart: unless-stopped
-  mongo-express:
-    image: mongo-express
-    container_name: server-mongo-express
-    environment:
-      - ME_CONFIG_MONGODB_SERVER=mongodb
-      - ME_CONFIG_MONGODB_ENABLE_ADMIN=true
-      - ME_CONFIG_MONGODB_ADMINUSERNAME=root
-      - ME_CONFIG_MONGODB_ADMINPASSWORD=pass12345
-      - ME_CONFIG_BASICAUTH_USERNAME=admin
-      - ME_CONFIG_BASICAUTH_PASSWORD=admin123
-    volumes:
-      - mongodb-data
-    depends_on:
-      - mongodb
-    networks:
-      - server-network
-    ports:
-      - 8081:8081
-    healthcheck:
-      test: wget --quiet --tries=3 --spider http://admin:admin123@localhost:8081 || exit 1
-      interval: 30s
-      timeout: 10s
-      retries: 3
-    restart: unless-stopped
+    # healthcheck:
+    #   test: test $$(echo "rs.initiate().ok || rs.status().ok" | mongo -u $${MONGO_INITDB_ROOT_USERNAME} -p $${MONGO_INITDB_ROOT_PASSWORD} --quiet) -eq 1
+    #   interval: 10s
+    #   start_period: 30s
+    # Add "forwardPorts": ["27017"] to **devcontainer.json** to forward MongoDB locally.
+    # (Adding the "ports" property to this file will not forward from a Codespace.)
+
 volumes:
-  mongodb-data:
-    name: mongodb-data
-networks:
-  server-network:
+  mongodb-data: null
